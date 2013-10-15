@@ -1,42 +1,462 @@
 <!DOCTYPE html>
-<!--
-    Licensed to the Apache Software Foundation (ASF) under one
-    or more contributor license agreements.  See the NOTICE file
-    distributed with this work for additional information
-    regarding copyright ownership.  The ASF licenses this file
-    to you under the Apache License, Version 2.0 (the
-    "License"); you may not use this file except in compliance
-    with the License.  You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on an
-    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-     KIND, either express or implied.  See the License for the
-    specific language governing permissions and limitations
-    under the License.
--->
 <html>
     <head>
         <meta charset="utf-8" />
         <meta name="format-detection" content="telephone=no" />
-        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
-        <link rel="stylesheet" type="text/css" href="css/index.css" />
-        <title>Hello World</title>
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        
+        <script type="text/javascript" src="phonegap.js"></script>
+        
+        <script src="jq/jquery.js"></script>
+        <script type="text/javascript">
+            var inAnyang=false;
+            var deviceReadyDeferred = $.Deferred();
+            var jqmReadyDeferred = $.Deferred();
+            var startLat=37.39697;
+            var startLon=126.93971;
+            var currentLat=startLat;
+            var currentLon=startLon;
+            var revisiting=false;
+            
+            var options = {
+                enableHighAccuracy: true
+            };
+        
+        document.addEventListener("deviceReady", deviceReady, false);
+        
+        function deviceReady() {
+            deviceReadyDeferred.resolve();
+            
+        }
+        
+        $(document).one("mobileinit", function () {jqmReadyDeferred.resolve();
+                        $.mobile.autoInitializePage=false;
+                        $.mobile.ajaxEnabled=false;
+                        $.mobile.loadingMessage=false;});
+                        
+                        $.when(deviceReadyDeferred, jqmReadyDeferred).then(doWhenBothFrameworksLoaded);
+                        
+                        function testPosition(position){
+                            var skippage=window.localStorage.getItem("touched");
+                            
+                            if(position.coords.latitude<37.43&&position.coords.latitude>37.2116&&position.coords.longitude>126.5222&&position.coords.longitude<127.0){
+                                inAnyang=true;
+                                currentLat=position.coords.latitude;
+                                currentLon=position.coords.longitude;
+                                startLat=currentLat;
+                                startLon=currentLon;                                
+                            }
+                            else{
+                                inAnyang=false;
+                                currentLat=position.coords.latitude;
+                                currentLon=position.coords.longitude;
+                            }
+                            if(skippage=="true") {
+                                if(inAnyang){
+                                    window.location.hash='#page1';
+                                }
+                                else{
+									window.location.hash='#page2';                                    
+                                }
+                            }
+                            else{
+                                window.location.hash='#page0';
+                            }
+                        }
+        function onError(error){
+            var skippage=window.localStorage.getItem("touched");
+            inAnyang=false;
+            if(skippage=="true") {
+                if(inAnyang){
+                    window.location.hash='#page1';
+                    
+                }
+                else{
+                    window.location.hash='#page2';
+                    
+                }
+            }
+            else{
+                window.location.hash='#page0';
+            }
+        }
+        
+        function doWhenBothFrameworksLoaded() {
+            jQuery.get("http://interface-assets.apap.or.kr/dataxml/drawlist.xml", {}, function(data) {
+                       jQuery(data).find("li1").each(function() {
+                                                     var markerxml = jQuery(this);
+                                                     var listtext=markerxml.attr("text");
+                                                     var listid="cc"+markerxml.attr("combination");
+                                                     $("#ul1").append('<li id='+listid+'>'+listtext+'</li>');
+                                                     var alreadyviewed=window.localStorage.getItem(listid);
+                                                     if(alreadyviewed!=null){
+                                                     $('#'+listid).css("color","rgb(50,50,100)");
+                                                     }
+                                                     else{
+                                                     $('#'+listid).css("color","rgb(0,255,64)");
+                                                     }
+                                                     });
+                       jQuery(data).find("li2").each(function() {
+                                                     var markerxml = jQuery(this);
+                                                     var listtext=markerxml.attr("text");
+                                                     var listid="cc"+markerxml.attr("combination");
+                                                     $("#ul2").append('<li id='+listid+'>'+listtext+'</li>');
+                                                     var alreadyviewed=window.localStorage.getItem(listid);
+                                                     if(alreadyviewed!=null){
+                                                     $('#'+listid).css("color","rgb(50,50,100)");
+                                                     }
+                                                     else{
+                                                     $('#'+listid).css("color","rgb(255,128,0)");
+                                                     }
+                                                     });
+                       jQuery(data).find("li3").each(function() {
+                                                     var markerxml = jQuery(this);
+                                                     var listtext=markerxml.attr("text");
+                                                     var listid="cc"+markerxml.attr("combination");
+                                                     $("#ul3").append('<li id='+listid+'>'+listtext+'</li>');
+                                                     var alreadyviewed=window.localStorage.getItem(listid);
+                                                     if(alreadyviewed!=null){
+                                                     $('#'+listid).css("color","rgb(50,50,100)");
+                                                     }
+                                                     else{
+                                                     $('#'+listid).css("color","rgb(255,0,128)");
+                                                     }
+                                                     });
+                       jQuery(data).find("li4").each(function() {
+                                                     var markerxml = jQuery(this);
+                                                     var listtext=markerxml.attr("text");
+                                                     var listid="cc"+markerxml.attr("combination");
+                                                     $("#ul4").append('<li id='+listid+'>'+listtext+'</li>');
+                                                     var alreadyviewed=window.localStorage.getItem(listid);
+                                                     if(alreadyviewed!=null){
+                                                     $('#'+listid).css("color","rgb(50,50,100)");
+                                                     }
+                                                     else{
+                                                     $('#'+listid).css("color","rgb(0,255,255)");
+                                                     }
+                                                     });
+                       jQuery(data).find("li5").each(function() {
+                                                     var markerxml = jQuery(this);
+                                                     var listtext=markerxml.attr("text");
+                                                     var listid="cc"+markerxml.attr("combination");
+                                                     $("#ul5").append('<li id='+listid+'>'+listtext+'</li>');
+                                                     var alreadyviewed=window.localStorage.getItem(listid);
+                                                     if(alreadyviewed!=null){
+                                                     $('#'+listid).css("color","rgb(50,50,100)");
+                                                     }
+                                                     else{
+                                                     $('#'+listid).css("color","rgb(185,0,255)");
+                                                     }
+                                                     });
+                       jQuery(data).find("li6").each(function() {
+                                                     var markerxml = jQuery(this);
+                                                     var listtext=markerxml.attr("text");
+                                                     var listid="cc"+markerxml.attr("combination");
+                                                     $("#ul6").append('<li id='+listid+'>'+listtext+'</li>');
+                                                     var alreadyviewed=window.localStorage.getItem(listid);
+                                                     if(alreadyviewed!=null){
+                                                     $('#'+listid).css("color","rgb(50,50,100)");
+                                                     }
+                                                     else{
+                                                     $('#'+listid).css("color","rgb(0,128,255)");
+                                                     }
+                                                     });
+                       });
+                       
+                       
+                       var passingcolor=(Math.floor(Math.random()*(6.0-1.0+1)+1.0));
+                       
+                       if(passingcolor==1){
+                           $("#passingpage").css("background-color","rgb(0,255,64)");
+                       }
+                       else if(passingcolor==2){
+                           $("#passingpage").css("background-color","rgb(255,128,0)");
+                           
+                       }
+                       else if(passingcolor==3){
+                           $("#passingpage").css("background-color","rgb(255,0,128)");
+                           
+                       }
+                       else if(passingcolor==4){
+                           $("#passingpage").css("background-color","rgb(0,255,255)");
+                           
+                       }
+                       else if(passingcolor==5){
+                           $("#passingpage").css("background-color","rgb(185,0,255)");
+                           
+                       }
+                       else{
+                           $("#passingpage").css("background-color","rgb(0,128,255)");
+                       }
+                       
+                       
+                       $.mobile.initializePage();
+                       setTimeout(function(){navigator.geolocation.getCurrentPosition(testPosition,onError,options);},2000);
+                       navigator.splashscreen.hide();
+                       
+                       $(document).bind("touchmove",function(e){
+                                        e.preventDefault();
+                                        });
+                                        $('.scrollable').bind("touchmove",function(e){
+                                                              e.stopPropagation();
+                                                              });
+                                                              $.mobile.defaultPageTransition = "slide";
+        }
+        </script>
+        <script src="jq/jquery.mobile.js"></script>
+        <link rel="stylesheet" href="css/index.css" />
+        <link rel="stylesheet" href="jq/jquery.mobile.css" />
+        <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=geometry&sensor=true"></script>
+        <script type="text/javascript" src="js/infobox.js"></script>
+        <link rel="stylesheet" href="css/flexslider.css"/>
+        <script type="text/javascript" src="js/jquery.flexslider.js"></script>
+        <title>인터페이스</title>
     </head>
-    <body>
-        <div class="app">
-            <h1>PhoneGap</h1>
-            <div id="deviceready" class="blink">
-                <p class="event listening">Connecting to Device</p>
-                <p class="event received">Device is Ready</p>
+    
+    <body style="background-color:rgb(255,245,109);">
+        <script type="text/javascript" src="js/custom.js"></script>
+        
+        <div data-role="page">
+            <div id="passingpage" style="background-color:rgb(255,245,109);width:100%;height:100%;position:absolute;top:0%;left:0%;">
+                <img src="img/interface_ko.png" style="display:block;width:60%;position:absolute;top:50%;left:5%;"/>
             </div>
         </div>
-        <script type="text/javascript" src="phonegap.js"></script>
-        <script type="text/javascript" src="js/index.js"></script>
-        <script type="text/javascript">
-            app.initialize();
-        </script>
+        
+        <div data-role="page" id="page0">
+            <div style="background-color:rgb(255,245,109);width:100%;height:100%;position:absolute;top:0%;left:0%;">
+                <p class="useleft boldtext">&nbsp;</p><p class="useright boldtext"><b>&nbsp;</b></p>
+                <p class="useleft boldtext">&nbsp;</p><p class="useright boldtext"><b>&nbsp;</b></p>
+                <p class="useleft boldtext">&nbsp;</p><p class="useright boldtext"><b>사용설명서</b></p>
+                <p class="useleft normaltext">1.</p><p class="useright normaltext">인터페이스는 사용자의 현재 위치에 따라 다른 방식으로 동작합니다.</p>
+                <p class="useleft normaltext">2.</p><p class="useright normaltext">안양공공예술프로젝트(APAP) 현장(안양예술공원 또는 평촌 중앙공원 일대)에 있는 사용자는</p>
+                <p class="useleft normaltext">→</p><p class="useright normaltext">본인의 현재 위치와 주변에 있는 APAP 작품들의 위치를 지도 위에 표시된 색점을 통해 확인할 수 있습니다.</p>
+                <p class="useleft normaltext">→</p><p class="useright normaltext">색점을 터치하면 기존의 APAP 작품들과 이를 바탕으로 여섯 명/팀의 작가들이 새롭게 제안한 작업들에 대한 정보를 볼 수 있습니다.</p>
+                <p class="useleft normaltext">→</p><p class="useright normaltext">새롭게 제안된 작업들은 실제 APAP 작품 앞에서 스마트폰을 통해서만 감상할 수 있습니다. 작업을 감상할 수 있는 범위에 들어서면, 해당되는 작품 표시 색점이 튀어오르게 됩니다.</p>
+                <p class="useleft normaltext">→</p><p class="useright normaltext">기존의 APAP 작품이 이전된 경우에는 원래의 장소와 이전된 장소에서, 철거된 경우에는 원래의 장소에서 새롭게 제안된 작업들을 감상할 수 있습니다.</p>
+                <p class="useleft normaltext">3.</p><p class="useright normaltext">APAP 현장이 아닌 곳에 있는 사용자는 지도 위에서 기존의 APAP 작품들과 여섯 명/팀의 작가들이 새롭게 제안한 작업들에 관한 정보를 둘러볼 수 있습니다. 현장 방문을 통해, 또 다른 방식으로 예술을 경험해 보시기 바랍니다.</p>
+                
+                <img class="buttomRectButton" src="img/buttons/close_K.png" onclick="nevershowagain()"/>
+            </div>
+        </div>
+        
+        
+        <div data-role="page" id="page1">
+            <div style="background-color:rgb(255,245,109);width:100%;height:100%;position:absolute;top:0%;left:0%;">
+                <p class="boldtext starttext" style="color:rgb(0,0,0);position:absolute;top:50%;left:5%;">우리는 지금<br>안양공공예술프로젝트 현장에<br>있습니다. 인터페이스로의<br>여정을 시작해볼까요?</p>
+                <img class="buttomRectButton" src="img/buttons/start_K.png" onclick="goToMain()">
+                    </div>
+        </div>
+        
+        
+        <div data-role="page" id="page2">
+            <div style="background-color:rgb(0,0,0);width:100%;height:100%;position:absolute;top:0%;left:0%;">
+                <p class="boldtext starttext" style="color:rgb(255,245,109);position:absolute;top:50%;left:5%;">우리는 지금<br>안양공공예술프로젝트 현장이<br>아닌 다른 곳에 있습니다. 현장<br>방문에 앞서, 인터페이스로의<br>여정을 미리 둘러볼까요?</p><
+                <p style="">
+                <img class="buttomRectButton" src="img/buttons/start_K_2.png" onclick="goToMain()">
+                    </div>
+        </div>
+        
+        
+        <div data-role="page" id="page3">
+            
+            <div id="map_canvas" style="width:100%;height:100%;position:absolute;top:0%"></div>
+            <script src="js/loadMap.js"></script>
+            <div style="background-color:rgba(255,255,255,0.01);width:100%;height:10%;position:absolute;top:90%"></div>
+            <img src="img/buttons/menu.png" class="buttomCircButton loc1" onclick="goToInformation()"/>
+            <img src="img/buttons/center.png" id="locateButton" class="buttomCircButton loc2" onclick="detectMyLocation()"/>
+            <img src="img/buttons/exit.png" id="exitButton" class="buttomCircButton loc3" onclick="goBackToTest()"/>
+            
+            <div class="infobox-wrapper">
+                <div id="infobox" class="menubutton">
+                    <p id="a0" class="popup boldtext" style="background:rgb(50,50,100);color:rgb(255,255,255);text-align:right">&nbsp;</p>
+                    <p id="a1" onclick="a1show()" class="popup boldtext" style="background:rgb(0,255,64);color:rgb(50,50,100);text-align:right">김시원+케이크<br>프리푸, 2013</p>
+                    <p id="a2" onclick="a2show()" class="popup boldtext" style="background:rgb(255,128,0);color:rgb(50,50,100);text-align:right">미켈란젤로 피스똘레또 밴드<br>유토피아의 과거 &amp; 파라다이스의 과거, 2013</p>
+                    <p id="a3" onclick="a3show()" class="popup boldtext" style="background:rgb(255,0,128);color:rgb(50,50,100);text-align:right">윤지원<br>이것들은 예술을 이야기하고 있지만<br>예술이 아니다, 2013</p>
+                    <p id="a4" onclick="a4show()" class="popup boldtext" style="background:rgb(0,255,255);color:rgb(50,50,100);text-align:right">이수성<br>안양 스카이, 2013</p>
+                    <p id="a5" onclick="a5show()" class="popup boldtext" style="background:rgb(185,0,255);color:rgb(50,50,100);text-align:right">전소정<br>예술가의 정원, 2013</p>
+                    <p id="a6" onclick="a6show()" class="popup boldtext" style="background:rgb(0,128,255);color:rgb(50,50,100);text-align:right">최기창<br>M+C 프로젝트, 2013</p>
+                </div>
+            </div>
+            
+        </div>
+        
+        <div data-role="page" id="page4">
+            <div id="infobar" style="background-color:rgb(0,0,0);width:100%;height:100%;position:absolute;top:0%">
+                <p  style="background-color:rgb(0,0,0);height:20px;">&nbsp;</p>
+                <p  class="leftThin boldtext" style="background-color:rgb(0,255,64);">&nbsp;</p><p class="righttext boldtext" style="color:rgb(0,255,64);" onclick="goToArtistInformation1()">김시원+케이크</p>
+                <p class="leftThin boldtext" style="background-color:rgb(255,128,0);">&nbsp;</p><p class="righttext boldtext" style="color:rgb(255,128,0);" onclick="goToArtistInformation2()">미켈란젤로 피스똘레또 밴드</p>
+                <p class="leftThin boldtext" style="background-color:rgb(255,0,128);">&nbsp;</p><p class="righttext boldtext" style="color:rgb(255,0,128);" onclick="goToArtistInformation3()">윤지원</p>
+                <p class="leftThin boldtext" style="background-color:rgb(0,255,255);">&nbsp;</p><p class="righttext boldtext" style="color:rgb(0,255,255);" onclick="goToArtistInformation4()">이수성</p>
+                <p class="leftThin boldtext" style="background-color:rgb(185,0,255);">&nbsp;</p><p class="righttext boldtext" style="color:rgb(185,0,255);" onclick="goToArtistInformation5()">전소정</p>
+                <p class="leftThin boldtext" style="background-color:rgb(0,128,255);">&nbsp;</p><p class="righttext boldtext" style="color:rgb(0,128,255);" onclick="goToArtistInformation6()">최기창</p>
+            </div>
+            
+            <img src="img/buttons/arrow_left_yellow.png" class="buttomCircButton loc1" onclick="goToMainRev()"/>
+            <img src="img/buttons/question_yellow.png" class="buttomCircButton loc4" onclick="goToGeneralInfo()"/>
+        </div>
+        
+        
+        <div data-role="page" id="generalinfo">
+            <div style="background-color:rgb(255,245,109);width:100%;height:100%;position:absolute;top:0%">
+                <p class="titletext boldtext">인터페이스: 나의, 나만의 공공예술</p>
+                <p class="maintext normaltext">2005년 시작된 안양공공예술프로젝트(APAP)는 현재까지 세 번의 행사를 치러내면서 다양한 시도들을 안양 곳곳에 남겨왔습니다. 공공예술이라는 이름으로 우리의 삶 속으로 들어온 예술은 어떤 방식으로 우리와 관계를 맺어왔을까요? 인터페이스는 우리가 예술과 관계 맺어온 다양한 방식을 다시 검토하고, 고민하고, 새로운 제안을 시도합니다. 인터페이스는 김시원+케이크, 미켈란젤로 피스똘레또 밴드, 윤지원, 이수성, 전소정, 최기창 등 여섯 명/팀의 작가들이 안양이라는 도시가 가지고 있는 일상의 결 위에 덧입혀졌던, 그러나 이제는 잊혀지고 지워져 보이지 않는 예술의 흔적을 추적해가는 과정 속에서 삶의 공간, 일상의 영역에 자리잡고 있는 예술과 조우하고, 대화하고, 관계 맺어가는 다양한 목소리를 들려줍 니다. 이 작가들은 기존의 APAP 작품들이 가지고 있던 개개의 맥락과 상황으로부터 출발하여 각자의 관심사가 반영된 이야기로 가상의 지도를 그려내고, 이들의 지도는 스마트폰의 모바일 애플리케이션을 통해 살아있는 실제 시간과 공간 위로 중첩되며 우리에게 또다른 상상의 여정을 제안할 것입니다.</p>
+            </div>
+            <img src="img/buttons/arrow_left_blue.png" class="buttomCircButton loc1" onclick="goToInformationRev()"/>
+        </div>
+        
+        <div data-role="page" id="a1info">
+            <div style="background-color:rgb(0,255,64);width:100%;height:100%;position:absolute;top:0%">
+                <p class="titletext boldtext">김시원+케이크,<br>프리푸, 2013</p>
+                <p class="maintext normaltext">프로젝트 듀오 김시원과 케이크가 제안하는 여정은 ‘프리푸’라고 불리는 정체불명의 어떤 ‘것’을 우연히 손에 넣게 되고 이것을 얼떨결에 집으로 가져와버린 ‘나’의 심리 변화를 따라 펼쳐집니다. 개인이 소유해서는 안되는 것, ‘프리푸’를 소유하게 된 ‘나’를 둘러싸고 벌어지는 일들은 프리푸에 대한 호기심을 자극하고, 김시원과 케이크가 안양이라는 도시에 흩뿌려 놓은 영상작업들은 이 프리푸의 모호한 실체에 다가가는 실마리를 제공합니다. 김시원과 케이크는 안양예술공원과 평촌 도심의 공공장소에 놓인 기존의 APAP 작품들과 개인의 공간에서 발생하는 행위들을 일대일 대응시킴으로써 공적인 영역과 사적인 영역을 규정하는 관행들에 대한 일련의 질문을 제기하고, 프리푸의 실체를 추적해가는 여정을 통해 그 답을 고민해 보도록 권합니다.
+                </p>
+            </div>
+            <img src="img/buttons/arrow_left_blue.png" class="buttomCircButton loc1" onclick="goToInformationRev()"/>
+            <img src="img/buttons/arrow_right_blue.png" class="buttomCircButton loc4" onclick="goToList1()"/>
+        </div>
+        
+        <div data-role="page" id="a2info">
+            <div style="background-color:rgb(255,128,0);width:100%;height:100%;position:absolute;top:0%">
+                <p class="titletext boldtext">미켈란젤로 피스똘레또 밴드,<br>유토피아의 과거 &amp; 파라다이스의 과거, 2013</p>
+                <p class="maintext normaltext">조은지와 박보나로 구성된 프로젝트 그룹 미켈란젤로 피스똘레또 밴드는 음악을 통해 기존의 APAP 작품들과 물리적, 정신적 교감을 시도합니다. 평촌 지역의 작품들로부터 영감을 받은 &lt;유토피아의 과거&gt;와 안양예술공원의 작품들로부터 영감을 받은 &lt;파라다이스의 과거&gt;는 사운드와 시, 그리고 퍼포먼스를 담은 뮤직비디오의 형식으로 제안됩니다. 이들은 유토피아 혹은 파라다이스를 배경으로 나타났다 사라지기를 반복하는 사랑을 찾아다니거나, 이루지 못했던 사랑을 추억하며 뒤늦은 고백을 하기도 하며, 지나간 사랑에 대한 세밀한 감정을 삶의 공간 속에 펼쳐 보여 줍니다. 이들의 이야기는 과거와 현재 그리고 미래에 대한 총체적 부정으로부터 출발하는 사랑과 증오에 관한 서사인 동시에 공공예술과 그것을 둘러싸고 있는 다양한 관계들에 대한 은유이기도 합니다.
+                </p>
+            </div>
+            <img src="img/buttons/arrow_left_blue.png" class="buttomCircButton loc1" onclick="goToInformationRev()"/>
+            <img src="img/buttons/arrow_right_blue.png" class="buttomCircButton loc4" onclick="goToList2()"/>
+        </div>
+        
+        <div data-role="page" id="a3info">
+            <div style="background-color:rgb(255,0,128);width:100%;height:100%;position:absolute;top:0%">
+                <p class="titletext boldtext">윤지원,<br>이것들은 예술을 이야기하고 있지만<br>예술이 아니다, 2013</p>
+                <p class="maintext normaltext">윤지원이 선택한 여정은 APAP와 관계하는 공적이고 사적인 기억을 거슬러 올라가는 시간 속에서 펼쳐집니다. 2005년부터 시작된 APAP는 서로 다른 취향과 이해관계가 공존하는 가운데 다양한 입장과 반응들을 만들어왔고, 이것은 공공예술, 나아가 예술 일반을 바라보는 어떤 시각들을 형성하고 서술해왔습니다. 윤지원은 공적이거나 사적인 기록물들, 즉 공공기관의 홍보 자료, 대중 매체의 보도 자료, 공공장소에 설치된 CCTV 영상, 웹 서핑을 통해 쉽게 찾아볼 수 있는 일반 시민들의 개인 촬영물 등이 기억하고 있는 APAP의 흔적을 따라가며 ‘공공’과 ‘예술’을 둘러싸고 벌어지는 겹겹의 관계와 상황을 드러내 보여 줍니다. 다큐멘터리의 형식으로 펼쳐지는 이 여정을 마무리지으며, 예술에 관해 이야기하고 있는 서로 다른 목소리들 속에서 우리는 과연 무엇을 들을 수 있을까요?
+                </p>
+            </div>
+            <img src="img/buttons/arrow_left_blue.png" class="buttomCircButton loc1" onclick="goToInformationRev()"/>
+            <img src="img/buttons/arrow_right_blue.png" class="buttomCircButton loc4" onclick="goToList3()"/>
+        </div>
+        
+        <div data-role="page" id="a4info">
+            <div style="background-color:rgb(0,255,255);width:100%;height:100%;position:absolute;top:0%">
+                <p class="titletext boldtext">이수성,<br> 안양 스카이, 2013</p>
+                <p class="maintext normaltext">도심에서 마주치는 공공예술 작품들은 우리에게 늘 하나의 의미심장한 시점을 강요하는데, APAP 작품들의 경우 역시 예외는 아닙니다. 누구에게든, 언제든 자유로운 접근과 접촉이 허용되지만, 이렇게 확장된 예술 체험은 현실에 존재하는 물리적 제약 앞에서는 여전히 무력합니다. 물리적인 허용 범위를 넘어서는 시선으로 작품을 경험하는 것이 불가능하다는 사실은 어쩌면 공공예술이 달콤하게 속삭이고 있는 ‘소통’이라는 화두 역시 제한적일 수 밖에 없음을 빗대어 드러내는 것이 아닐까요? 이에 &lt;안양 스카이&gt;는 단 한번도 경험하지 못했던 ‘시계(視界)’의 일탈을 제안합니다. 자유로이 하늘을 날아다니는 새처럼 높은 곳에서 내려다보는 작품들은 우리에게 낯선 풍경으로 다가올 것이고, 이러한 풍경은 중력을 벗어나는 무한한 상상의 원동력으로 작용할 것입니다.
+                </p>
+            </div>
+            <img src="img/buttons/arrow_left_blue.png" class="buttomCircButton loc1" onclick="goToInformationRev()"/>
+            <img src="img/buttons/arrow_right_blue.png" class="buttomCircButton loc4" onclick="goToList4()"/>
+        </div>
+        
+        <div data-role="page" id="a5info">
+            <div style="background-color:rgb(185,0,255);width:100%;height:100%;position:absolute;top:0%">
+                <p class="titletext boldtext">전소정,<br> 예술가의 정원, 2013</p>
+                <p class="maintext normaltext">늘 무심코 지나치던 무언가가 간혹 어떤 사연을 지니고 있는 것처럼 보일 때가 있습니다. 그래서 그 내밀한 이야기에 때때로 귀를 기울이게 됩니다. 익숙한 풍경 속에 자리잡고 있던 APAP 작품들 역시 우리가 미처 알아채지 못했던 어떤 사연들을 지니고 있을지 모릅니다. 안양예술공원과 평촌 도심에 자리잡고 있는 이 APAP 작품들은 전소정이 가꾸는 &lt;예술가의 정원&gt;에서 저마다의 비밀스런 이야기들을 하나하나 펼쳐 보입니다. 이 이야기들은 때로는 환상 속으로의 여행을 제안하기도 하고, 때로는 현실을 재현한 듯 실제의 사건을 연상시키기도 합니다. 작품을 둘러싸고 떠돌던 소문들, 서로 다른 입장들, 그럴듯한 상상들이 실제의 시간과 공간 속에 존재하는 작품들과 중첩되며 우리는 전혀 경험하지 못했던 낯선 방식으로 작품들과 조우하게 됩니다.
+                </p>
+            </div>
+            <img src="img/buttons/arrow_left_blue.png" class="buttomCircButton loc1" onclick="goToInformationRev()"/>
+            <img src="img/buttons/arrow_right_blue.png" class="buttomCircButton loc4" onclick="goToList5()"/>
+        </div>
+        
+        <div data-role="page" id="a6info">
+            <div style="background-color:rgb(0,128,255);width:100%;height:100%;position:absolute;top:0%">
+                <p class="titletext boldtext">최기창,<br>M+C 프로젝트, 2013</p>
+                <p class="maintext normaltext">최기창은 APAP의 여러 장소와 프로그램, 그리고 잠재적 대중을 이어주는 매개로 기능했던 &lt;자전거 프로젝트&gt;(2010)를 재활용하여 APAP의 흔적을 추적해가는 &lt;M+C 프로젝트&gt;를 제안합니다. 접근이 어려워 소외되었던 장소들을 요긴하게 이어주던 자전거는 일상에 파묻혀 잊혀지고 사라진, 그래서 평가조차 되지 않았던 APAP 작품들을 재발견하고 연결해주는 기능을 효과적으로 수행합니다. 느리고 불편한 자전거를 타거나 끌고 가며 마주치는 작품들을 배경삼아 작품에 대한 객관적 정보와 전문가의 평가, 일반인들의 감상을 풀어낸 랩이 반복적인 비트와 리듬을 타고 흐르며 우리의 귓가를 맴돕니다. 불쑥 눈앞에 나타난 작품에 대한 객관적/주관적 정보와 전문적/비전문적 판단이 청각적으로 교차하고 맞물리는 가치 혼란의 상황에서 우리는 과연 무엇을 경험하게 될까요?
+                </p>
+            </div>
+            <img src="img/buttons/arrow_left_blue.png" class="buttomCircButton loc1" onclick="goToInformationRev()"/>
+            <img src="img/buttons/arrow_right_blue.png" class="buttomCircButton loc4" onclick="goToList6()"/>
+        </div>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        <div data-role="page" id="a1list">
+            <div style="background-color:rgb(0,0,0);width:100%;height:100%;position:absolute;top:0%">
+                <div class="scrollable" style="background-color:rgb(0,0,0);width:100%;height:60%;position:absolute;top:20%;overflow:scroll">
+                    <ul id="ul1" class="maintext2 normaltext">
+                        
+                    </ul>
+                </div>
+            </div>
+            <img src="img/buttons/arrow_left_yellow.png" class="buttomCircButton loc1" onclick="goToArtistInformation1Rev()"/>
+            
+        </div>
+        <div data-role="page" id="a2list">
+            <div style="background-color:rgb(0,0,0);width:100%;height:100%;position:absolute;top:0%">
+                <div class="scrollable" style="background-color:rgb(0,0,0);width:100%;height:60%;position:absolute;top:20%;overflow:scroll">
+                    <ul id="ul2" class="maintext2 normaltext">
+                        
+                    </ul>
+                </div>
+            </div>
+            <img src="img/buttons/arrow_left_yellow.png" class="buttomCircButton loc1" onclick="goToArtistInformation2Rev()"/>
+            
+        </div>
+        <div data-role="page" id="a3list">
+            <div style="background-color:rgb(0,0,0);width:100%;height:100%;position:absolute;top:0%">
+                <div class="scrollable" style="background-color:rgb(0,0,0);width:100%;height:60%;position:absolute;top:20%;overflow:scroll">
+                    <ul id="ul3" class="maintext2 normaltext">
+                        
+                    </ul>
+                </div>
+            </div>
+            <img src="img/buttons/arrow_left_yellow.png" class="buttomCircButton loc1" onclick="goToArtistInformation3Rev()"/>
+            
+        </div>
+        <div data-role="page" id="a4list">
+            <div style="background-color:rgb(0,0,0);width:100%;height:100%;position:absolute;top:0%">
+                <div class="scrollable" style="background-color:rgb(0,0,0);width:100%;height:60%;position:absolute;top:20%;overflow:scroll">
+                    <ul id="ul4" class="maintext2 normaltext">
+                        
+                    </ul>
+                </div>
+            </div>
+            <img src="img/buttons/arrow_left_yellow.png" class="buttomCircButton loc1" onclick="goToArtistInformation4Rev()"/>
+            
+        </div>
+        <div data-role="page" id="a5list">
+            <div style="background-color:rgb(0,0,0);width:100%;height:100%;position:absolute;top:0%">
+                <div class="scrollable" style="background-color:rgb(0,0,0);width:100%;height:60%;position:absolute;top:20%;overflow:scroll">
+                    <ul id="ul5" class="maintext2 normaltext">
+                        
+                    </ul>
+                </div>
+            </div>
+            <img src="img/buttons/arrow_left_yellow.png" class="buttomCircButton loc1" onclick="goToArtistInformation5Rev()"/>
+            
+        </div>
+        <div data-role="page" id="a6list">
+            <div style="background-color:rgb(0,0,0);width:100%;height:100%;position:absolute;top:0%">
+                <div class="scrollable" style="background-color:rgb(0,0,0);width:100%;height:60%;position:absolute;top:20%;overflow:scroll">
+                    <ul id="ul6" class="maintext2 normaltext">
+                        
+                    </ul>
+                </div>
+            </div>
+            <img src="img/buttons/arrow_left_yellow.png" class="buttomCircButton loc1" onclick="goToArtistInformation6Rev()"/>
+            
+        </div>
+        
+        
+        <div data-role="page" id="videogallery">
+            <div style="background-color:rgb(0,0,0);width:100%;height:100%;position:absolute;top:0%">
+                <iframe id="videofile" style="width:100%;height:100%;position:absolute;top:0%" src="" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+                <img src="img/buttons/arrow_left_yellow.png" class="buttomCircButton loc1" onclick="goToMainRevDeleteVideo()"/>
+            </div>
+        </div>
+        
+        <div data-role="page" id="photogallery">
+            <div class="flex-container" style="background-color:#323264;width:100%;height:100%;position:absolute;top:0%">
+                <div id="myflexslider" class="flexslider">
+                    <ul class="slides">
+                    </ul>
+                </div>
+                <img src="img/buttons/arrow_left_yellow.png" class="buttomCircButton loc1" onclick="goToMainRev()"/>
+            </div>
+        </div>
+        
     </body>
 </html>
