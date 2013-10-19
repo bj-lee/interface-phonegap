@@ -35,7 +35,7 @@ function initialize(slat,slng,clat,clng) {
                                                 }
                                                 else{
                                                 
-                                                marker.set("isClose",true);
+                                                marker.set("isClose",false);
                                                 marker.setAnimation(null);
                                                 }
                                                 
