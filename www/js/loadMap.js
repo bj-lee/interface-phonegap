@@ -35,7 +35,7 @@ function initialize(slat,slng,clat,clng) {
                                                 }
                                                 else{
                                                 
-                                                marker.set("isClose",false);
+                                                marker.set("isClose",true);
                                                 marker.setAnimation(null);
                                                 }
                                                 
@@ -203,45 +203,7 @@ function a6show(){
 }
 
 
-function getPosition(position){
-    var current_latlng = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
-    
-    for (var i = 0; i < markers.length; i++) {
-        
-        var marker_latlng = markers[i].getPosition();
-        
-        var distance=google.maps.geometry.spherical.computeDistanceBetween(current_latlng,marker_latlng);
-        
-        
-        if(distance<markers[i].get("distcriteria")){
-            markers[i].set("isClose",true);
-            marker.setAnimation(google.maps.Animation.BOUNCE);
-        }
-        else{
-            markers[i].set("isClose",false);
-            marker.setAnimation(null);
-        }
-    }
-    location_marker.setPosition(current_latlng);
-    map.panTo(current_latlng);
-}
 
-function ifError(error){
-}
-
-
-function detectMyLocation(){
-    if(inAnyang){
-        navigator.geolocation.getCurrentPosition(getPosition,ifError);
-    }
-    else{
-        for (var i = 0; i < markers.length; i++) {
-            markers[i].setAnimation(null);
-        }
-        var start_latlng=new google.maps.LatLng(startLat,startLon);
-        map.panTo(start_latlng);
-    }
-}
 
 function shuffle(o){
     for(var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
@@ -294,3 +256,46 @@ function photoBoot(_id){
     
 }
 
+
+
+
+function getPosition(position){
+    var current_latlng = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
+    
+    for (var i = 0; i < markers.length; i++) {
+//        
+        var marker_latlng = markers[i].getPosition();
+//        
+        var distance=google.maps.geometry.spherical.computeDistanceBetween(current_latlng,marker_latlng);
+//        
+//        
+        if(distance<markers[i].get("distcriteria")){
+            markers[i].set("isClose",true);
+            markers[i].setAnimation(google.maps.Animation.BOUNCE);
+        }
+        else{
+            markers[i].set("isClose",false);
+            markers[i].setAnimation(null);
+        }
+    }
+    location_marker.setPosition(current_latlng);
+    map.panTo(current_latlng);
+}
+
+function ifError(error){
+    
+}
+
+
+function detectMyLocation(){
+    if(inAnyang){
+        navigator.geolocation.getCurrentPosition(getPosition,ifError,options);
+    }
+    else{
+        for (var i = 0; i < markers.length; i++) {
+            markers[i].setAnimation(null);
+        }
+        var start_latlng=new google.maps.LatLng(startLat,startLon);
+        map.panTo(start_latlng);
+    }
+}
