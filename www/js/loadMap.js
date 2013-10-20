@@ -35,7 +35,7 @@ function initialize(slat,slng,clat,clng) {
                                                 }
                                                 else{
                                                 
-                                                marker.set("isClose",true);
+                                                marker.set("isClose",false);
                                                 marker.setAnimation(null);
                                                 }
                                                 
@@ -276,7 +276,7 @@ function getPosition(position){
             markers[i].setAnimation(google.maps.Animation.BOUNCE);
         }
         else{
-            markers[i].set("isClose",true);
+            markers[i].set("isClose",false);
             markers[i].setAnimation(null);
         }
     }

@@ -47,7 +47,7 @@
                                 startLon=currentLon;                                
                             }
                             else{
-                                inAnyang=true;
+                                inAnyang=false;
                                 currentLat=position.coords.latitude;
                                 currentLon=position.coords.longitude;
                             }
@@ -82,16 +82,6 @@
         }
         
         function doWhenBothFrameworksLoaded() {
-            
-            $(window).bind("orientationchange", function(){
-                           var orientation = window.orientation;
-                           var new_orientation = (orientation) ? 0 : 180 + orientation;
-                           $('body').css({
-                                         "-webkit-transform": "rotate(" + new_orientation + "deg)"
-                                         });
-                           });
-            
-            
             jQuery.get("http://interface-assets.apap.or.kr/dataxml/drawlist.xml", {}, function(data) {
                        jQuery(data).find("li1").each(function() {
                                                      var markerxml = jQuery(this);
