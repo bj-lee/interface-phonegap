@@ -276,7 +276,7 @@ function getPosition(position){
             markers[i].setAnimation(google.maps.Animation.BOUNCE);
         }
         else{
-            markers[i].set("isClose",false);
+            markers[i].set("isClose",true);
             markers[i].setAnimation(null);
         }
     }
