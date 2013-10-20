@@ -257,7 +257,9 @@ function photoBoot(_id){
 }
 
 
-
+var options2 = {
+enableHighAccuracy: true, timeout:30000000, maximumAge:0
+};
 
 function getPosition(position){
     var current_latlng = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
@@ -289,7 +291,7 @@ function ifError(error){
 
 function detectMyLocation(){
     if(inAnyang){
-        navigator.geolocation.getCurrentPosition(getPosition,ifError,options);
+        navigator.geolocation.getCurrentPosition(getPosition,ifError,options2);
     }
     else{
         for (var i = 0; i < markers.length; i++) {
