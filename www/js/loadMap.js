@@ -285,7 +285,7 @@ function getPosition(position){
 }
 
 function ifError(error){
-    
+    navigator.geolocation.getCurrentPosition(getPosition,ifError,options2);
 }
 
 
